@@ -1,3 +1,5 @@
+import 'package:GetSetChat/views/chatRoomScreen.dart';
+import 'package:GetSetChat/views/search.dart';
 import 'package:GetSetChat/views/signin.dart';
 import 'package:GetSetChat/views/signup.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      routes: {
+        ChatRoomScreen.routeName : (ctx) => ChatRoomScreen(),
+        SignIn.routeName : (ctx) => SignIn(),
+        SignUp.routeName : (ctx) => SignUp(),
+        Search.routeName : (ctx) => Search(),
+      },
       home: SignUp(),
     );
   }

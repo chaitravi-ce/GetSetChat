@@ -1,13 +1,43 @@
+import 'package:GetSetChat/helpers/helperfunctions.dart';
+import 'package:GetSetChat/services/auth.dart';
+import 'package:GetSetChat/services/database.dart';
+import 'package:GetSetChat/views/chatRoomScreen.dart';
+import 'package:GetSetChat/views/signup.dart';
 import 'package:GetSetChat/widget/widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
+  static const routeName = '/signin';
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
+
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  AuthMethods authMethods = new AuthMethods();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+  QuerySnapshot userSnapshot;
+
   @override
+
+  signIn(){
+    HelperFunction.saveUserEmail(email.text);
+    databaseMethods.getUserByEmail(email.text).then((value){
+      userSnapshot = value;
+      HelperFunction.saveUserName(userSnapshot.documents[0].data['username']);
+    });
+    authMethods.signInWithEmail(email.text, password.text).then((value) {
+      if(value != null){
+        
+        Navigator.of(context).pushReplacementNamed(ChatRoomScreen.routeName);
+      } 
+    });
+    //HelperFunction.saveUserName(username.text);
+    
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarMain(context),
@@ -21,10 +51,12 @@ class _SignInState extends State<SignIn> {
               children: <Widget>[
               SizedBox(height: 200,),
               TextField(
+                controller: email,
                 decoration: textFieldInputDecoration('email'),
                 style: simpleText()
               ),
               TextField(
+                controller: password,
                 decoration: textFieldInputDecoration('password'),
                 style: simpleText(),
               ),
@@ -35,23 +67,28 @@ class _SignInState extends State<SignIn> {
                 alignment: Alignment.centerRight,
               ),
               SizedBox(height: 16,),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xff007EF4),
-                      const Color(0xff2A75BC),
-                    ]
+              GestureDetector(
+                onTap: () {
+                  signIn();
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xff007EF4),
+                        const Color(0xff2A75BC),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30)
                   ),
-                  borderRadius: BorderRadius.circular(30)
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  width: MediaQuery.of(context).size.width,
+                  child: Text('Sign In', style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),),
                 ),
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                width: MediaQuery.of(context).size.width,
-                child: Text('Sign In', style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),),
               ),
               SizedBox(height: 16,),
               Container(
@@ -73,10 +110,15 @@ class _SignInState extends State<SignIn> {
                 children: <Widget>[
                 Text("Don't Have an Account ?", style: simpleText(),),
                 SizedBox(width: 4,),
-                Text("Register Now", 
-                  style: TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.underline,
+                GestureDetector(
+                  onTap: (){
+                    Navigator.of(context).pushReplacementNamed(SignUp.routeName);
+                  },
+                  child: Text("Register Now", 
+                    style: TextStyle(
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],)
