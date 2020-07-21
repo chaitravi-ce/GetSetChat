@@ -1,4 +1,6 @@
+import 'package:GetSetChat/helpers/constants.dart';
 import 'package:GetSetChat/services/database.dart';
+import 'package:GetSetChat/views/conversationScreen.dart';
 import 'package:GetSetChat/widget/widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -32,14 +34,8 @@ class _SearchState extends State<Search> {
     ) : Container();
   }
 
-  createChatRoomAndStartConversation(String username){
-    List<String> users = [username, ];
-    //databaseMethods.createChatRoom(chatRoomId, chatRoomMap);
-  }
-
   @override
-  void initState() {
-    
+  void initState() {   
     super.initState();
   }
 
@@ -78,6 +74,28 @@ class _SearchState extends State<Search> {
   }
 }
 
+getChatRoomId(String a, String b){
+  if(a.substring(0,1).codeUnitAt(0) > b.substring(0,1).codeUnitAt(0)){
+    return "$b\_$a";
+  }else{
+    return "$a\_$b";
+  }
+}
+
+createChatRoomAndStartConversation(BuildContext context, String username){
+  print('==================================');
+  print(Constants.myName);
+  String chatRoomId = getChatRoomId(username, Constants.myName);
+  List<String> users = [username, Constants.myName];
+  Map<String, dynamic> chatRoomMap = {
+    "users" : users,
+    "chatRoomId" : chatRoomId
+  };
+  DatabaseMethods().createChatRoom(chatRoomId, chatRoomMap);
+  Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(chatRoomId)));
+}
+
+
 class SearchTile extends StatelessWidget {
   final String username;
   final String email;
@@ -98,7 +116,7 @@ class SearchTile extends StatelessWidget {
         Spacer(),
         GestureDetector(
           onTap: (){
-
+            createChatRoomAndStartConversation(context, username);
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 24,vertical: 16),

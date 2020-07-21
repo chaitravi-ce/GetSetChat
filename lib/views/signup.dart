@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
       authMethods.signUpWithEmail(email.text,password.text);
       databaseMethods.uploadUserInfo(userMap);
       HelperFunction.isUserLoggedIn(true);
-      Navigator.of(context).pushReplacementNamed(ChatRoomScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(ChatRoom.routeName);
     }
     return Scaffold(
       appBar: appBarMain(context),

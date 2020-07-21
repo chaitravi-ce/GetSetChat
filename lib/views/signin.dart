@@ -1,3 +1,4 @@
+import 'package:GetSetChat/helpers/constants.dart';
 import 'package:GetSetChat/helpers/helperfunctions.dart';
 import 'package:GetSetChat/services/auth.dart';
 import 'package:GetSetChat/services/database.dart';
@@ -21,22 +22,20 @@ class _SignInState extends State<SignIn> {
   DatabaseMethods databaseMethods = new DatabaseMethods();
   QuerySnapshot userSnapshot;
 
-  @override
-
   signIn(){
-    HelperFunction.saveUserEmail(email.text);
-    databaseMethods.getUserByEmail(email.text).then((value){
-      userSnapshot = value;
-      HelperFunction.saveUserName(userSnapshot.documents[0].data['username']);
-    });
     authMethods.signInWithEmail(email.text, password.text).then((value) {
       if(value != null){
-        
-        Navigator.of(context).pushReplacementNamed(ChatRoomScreen.routeName);
+        HelperFunction.isUserLoggedIn(true);
+        databaseMethods.getUserByEmail(email.text).then((value){
+          userSnapshot = value;
+        });
+        print('================================================');
+        Constants.myName = userSnapshot.documents[0].data['username'];
+        HelperFunction.saveUserName(userSnapshot.documents[0].data['username']);
+        HelperFunction.saveUserEmail(userSnapshot.documents[0].data['email']);
+        Navigator.of(context).pushReplacementNamed(ChatRoom.routeName);
       } 
     });
-    //HelperFunction.saveUserName(username.text);
-    
   }
   Widget build(BuildContext context) {
     return Scaffold(

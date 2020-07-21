@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:GetSetChat/helpers/helperfunctions.dart';
 import 'package:GetSetChat/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -40,6 +41,7 @@ class AuthMethods{
 
   Future signOut()async{
     try{
+      HelperFunction.isUserLoggedIn(false);
       return await _auth.signOut();
     }catch(e){
       print(e.toString());
